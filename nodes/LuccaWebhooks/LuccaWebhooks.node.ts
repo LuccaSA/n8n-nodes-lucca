@@ -1,18 +1,13 @@
 import {
-	INodeExecutionData,
-	INodeOutputConfiguration,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookDescription,
 	IWebhookFunctions,
 	IWebhookResponseData,
 	JsonObject,
-	NodeConnectionType,
-	NodeOperationError,
 } from 'n8n-workflow';
-
-import { BaseHelperFunctions, BinaryHelperFunctions, RequestHelperFunctions } from 'n8n-workflow/dist/esm/interfaces';
 import { LuccaApiCredentialDescription } from '../../credentials/LuccaApiOAuth2Api.credentials';
+import { INodeProperties } from 'n8n-workflow/dist/esm/interfaces';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
 	httpMethod: 'GET',
@@ -32,36 +27,90 @@ export type WebhookData = JsonObject & {
 	description: string;
 	endpointId: number;
 }
+const webhookTopics = [
+	"calendar-event.created",
+	"calendar-event.updated",
+	"calendar-event.deleted",
+	"leave.created",
+	"leave.updated",
+	"leave.deleted",
+	"leave-request.created",
+	"leave-request.updated",
+	"leave-request.deleted",
+	"business-establishment.created",
+	"business-establishment.updated",
+	"business-establishment.deleted",
+	"legal-entity.created",
+	"legal-entity.updated",
+	"legal-entity.deleted",
+	"department.created",
+	"department.updated",
+	"department.deleted",
+	"employee.created",
+	"employee.updated",
+	"employee-personal-record.created",
+	"employee-personal-record.updated",
+	"job-qualification.created",
+	"job-qualification.updated",
+	"job-qualification.deleted",
+	"occupation-category.created",
+	"occupation-category.updated",
+	"occupation-category.deleted",
+	"employment.created",
+	"employment.updated",
+	"employment.deleted",
+	"job-position.created",
+	"job-position.updated",
+	"job-position.deleted"
+]
+function ToTitleCase(str: string): string {
+	return str.replace(
+		/\w\S*/g,
+		(txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
+	);
+}
+function distinctArray<T>(arr: T[]): T[] {
+	return arr.filter((value, index, self) => self.indexOf(value) === index);
+}
+function getResourceFromTopic(topic: string): string {
+	return topic.split('.')[0];
+}
+const resourcesOptions = distinctArray(webhookTopics.map(getResourceFromTopic)).map((resource) => ({
+	name: ToTitleCase(resource.replace('-',' ')),
+	value: resource,
+}));
+function getPropertyFromTopicsAndResource(topics: string[],resource: string ): INodeProperties{
+		return {
+			displayName: 'Operations',
+			name: 'operations',
+			type: 'multiOptions',
+			noDataExpression: true,
+			options: topics.filter(topic => getResourceFromTopic(topic) === resource).map(topic => {
+				const humanReadableTopic = ToTitleCase(topic.replace(/(\.|-)/g, ' '));
+				const action = topic.split('.')[1];
+				return {
+					name: humanReadableTopic,
+					value: topic,
+					action: humanReadableTopic,
+					description: `Triggers when a ${resource} is ${action}`,
+				};
+			}),
+			default: [],
+			displayOptions: {
+				show: {
+					resources:[resource]
+				},
+			},
+		};
+}
+const webhookProperties: INodeProperties[] = resourcesOptions.map(resource => getPropertyFromTopicsAndResource(webhookTopics,resource.value));
 
-function outputs(types: WebhookType[]): INodeOutputConfiguration[] {
-	return [
-		...types.map((eventType) => ({
-			displayName: eventType,
-			required: false,
-			type: 'main' as NodeConnectionType,
-		})),
-	];
-}
-function routeToOutput(
-	helpers: RequestHelperFunctions & BaseHelperFunctions & BinaryHelperFunctions,
-	outputIndex: number,
-	outputs: INodeOutputConfiguration[],
-	outputData: JsonObject[] | JsonObject,
-): INodeExecutionData[][] {
-	return outputs.map((e, index) => {
-		if (index === outputIndex) {
-			return helpers.returnJsonArray(Array.isArray(outputData) ? outputData : [outputData]);
-		} else {
-			return helpers.returnJsonArray([]);
-		}
-	});
-}
-const triggerOutputs = outputs(['employee.created', 'employee.updated']);
+
 export class LuccaWebhooks implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca Webhooks',
 		name: 'luccaWebhooks',
-		icon:  'file:./lucca.svg',
+		icon: 'file:./lucca.svg',
 		group: ['trigger', 'transform'],
 		version: 2,
 		description: 'Lucca webhooks node',
@@ -69,16 +118,26 @@ export class LuccaWebhooks implements INodeType {
 			name: 'LuccaWebhooks',
 		},
 		inputs: [],
-		outputs: triggerOutputs,
+		outputs: ['main'],
 		usableAsTool: true,
 		webhooks: [handShakeWebhook, eventsWebhook],
 		credentials: [LuccaApiCredentialDescription],
-		properties:[]
+		properties: [
+			{
+				displayName: 'Resources',
+				name: 'resources',
+				type: 'options',
+				options: resourcesOptions,
+				default: '',
+			},
+			...webhookProperties,
+		],
 	};
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
 		const method = req.method;
+		// setup handshake response
 		if (method === 'GET') {
 			const queryParams = req.query;
 			const echo = queryParams['echo'];
@@ -88,12 +147,15 @@ export class LuccaWebhooks implements INodeType {
 		}
 		const body = req.body as WebhookData;
 		const eventType = body.type;
-		const outputIndex = triggerOutputs.findIndex((output) => output.displayName === eventType);
-		if (outputIndex === -1) {
-			throw new NodeOperationError(this.getNode(), `No output found for event type: ${eventType}`);
+		const operation = this.getNodeParameter('operations') as string[];
+		if (!operation.includes(eventType)) {
+			// Ignore events that are not configured
+			return {
+				workflowData: [],
+			};
 		}
 		return {
-			workflowData: routeToOutput(this.helpers, outputIndex, triggerOutputs, body),
+			workflowData: [this.helpers.returnJsonArray([body])],
 		};
 	}
 }

@@ -71,6 +71,7 @@ const config: N8NPropertiesBuilderConfig = {
 };
 const parser = new N8NPropertiesBuilder(doc, config);
 const openApiProperties = parser.build();
+console.log(`Lucca: built ${openApiProperties.length} properties from OpenAPI spec`);
 
 
 

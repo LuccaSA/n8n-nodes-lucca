@@ -1944,7 +1944,7 @@
             "$ref": "#/components/responses/500"
           }
         }
-      },
+      }
     },
     "/lucca-api/employees/{id}": {
       "parameters": [
@@ -2845,7 +2845,7 @@
             "$ref": "#/components/responses/500"
           }
         }
-      },
+      }
     },
     "/lucca-api/employment-templates": {
       "parameters": [
