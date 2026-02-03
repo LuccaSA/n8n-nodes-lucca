@@ -6,7 +6,6 @@ import {
 	IWebhookResponseData,
 	JsonObject,
 } from 'n8n-workflow';
-import { LuccaApiCredentialDescription } from '../../credentials/LuccaApiOAuth2Api.credentials';
 import { INodeProperties } from 'n8n-workflow/dist/esm/interfaces';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
@@ -118,7 +117,7 @@ export class LuccaWebhooks implements INodeType {
 		outputs: ['main'],
 		usableAsTool: true,
 		webhooks: [handShakeWebhook, eventsWebhook],
-		credentials: [LuccaApiCredentialDescription],
+		credentials: [],
 		properties: [
 			{
 				displayName: 'Resources',
@@ -152,7 +151,7 @@ export class LuccaWebhooks implements INodeType {
 			};
 		}
 		return {
-			workflowData: [this.helpers.returnJsonArray([body.data])],
+			workflowData: [this.helpers.returnJsonArray([body])],
 		};
 	}
 }

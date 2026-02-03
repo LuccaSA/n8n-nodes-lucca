@@ -1,17 +1,17 @@
 {
 	"name": "@lucca/n8n-nodes-lucca",
 	"version": "0.1.0",
-	"description": "",
+	"description": "A n8n community node for Lucca's Public API",
 	"license": "MIT",
-	"homepage": "",
+	"homepage": "https://lucca.fr",
 	"keywords": [
 		"n8n-community-node-package",
 		"lucca",
 		"human-resources"
 	],
 	"author": {
-		"name": "Lucca Integrations",
-		"email": "TODO"
+		"name": "LuccaSA",
+		"email": "integrations@luccasoftware.com"
 	},
 	"repository": {
 		"type": "git"
