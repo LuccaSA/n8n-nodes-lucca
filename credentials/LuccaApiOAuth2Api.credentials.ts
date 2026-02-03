@@ -67,7 +67,7 @@ export class LuccaApiOAuth2Api implements ICredentialType {
 			displayName: 'Server URL',
 			name: 'serverUrl',
 			type: 'string',
-			default: 'https://your-domain.luccasoftware.com',
+			default: 'https://your-domain.ilucca.net',
 			required: true,
 		},
 		{
@@ -107,7 +107,7 @@ export class LuccaApiOAuth2Api implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'string',
-			default: scopes.join(' '),
+			default:'',
 			// multiple values can be selected
 			required: true,
 		},

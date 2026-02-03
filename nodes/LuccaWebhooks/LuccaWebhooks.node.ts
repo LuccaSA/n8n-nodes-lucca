@@ -19,14 +19,11 @@ export const eventsWebhook: IWebhookDescription = {
 	path:'',
 	responseData: 'noData'
 };
-export type WebhookType = string;
-export type WebhookData = JsonObject & {
-	id: string;
-	type: WebhookType;
-	url: string
-	description: string;
-	endpointId: number;
-}
+export type Topic = string;
+export type Event = JsonObject & {
+	topic: Topic;
+	data: JsonObject;
+};
 const webhookTopics = [
 	"calendar-event.created",
 	"calendar-event.updated",
@@ -145,17 +142,17 @@ export class LuccaWebhooks implements INodeType {
 				webhookResponse: echo,
 			};
 		}
-		const body = req.body as WebhookData;
-		const eventType = body.type;
+		const body = req.body as Event;
+		const topic = body.topic;
 		const operation = this.getNodeParameter('operations') as string[];
-		if (!operation.includes(eventType)) {
+		if (!operation.includes(topic)) {
 			// Ignore events that are not configured
 			return {
 				workflowData: [],
 			};
 		}
 		return {
-			workflowData: [this.helpers.returnJsonArray([body])],
+			workflowData: [this.helpers.returnJsonArray([body.data])],
 		};
 	}
 }
