@@ -4,11 +4,9 @@ import {
 	OperationContext,
 	OperationsCollector,
 } from '@devlikeapro/n8n-openapi-node';
-//from '../../lib/n8n-openapi-node/src';
 import * as doc from './lucca-api@2024-11-01.json';
 import { INodeProperties, INodeType, INodeTypeDescription } from 'n8n-workflow';
 import { LuccaApiCredentialDescription } from '../../credentials/LuccaApiOAuth2Api.credentials';
-// import { eventsWebhook, handShakeWebhook } from '../EmployeeTriggers/EmployeeTriggers.node';
 import { OpenAPIV3 } from 'openapi-types';
 
 
@@ -71,7 +69,6 @@ const config: N8NPropertiesBuilderConfig = {
 };
 const parser = new N8NPropertiesBuilder(doc, config);
 const openApiProperties = parser.build();
-console.log(`Lucca: built ${openApiProperties.length} properties from OpenAPI spec`);
 
 
 

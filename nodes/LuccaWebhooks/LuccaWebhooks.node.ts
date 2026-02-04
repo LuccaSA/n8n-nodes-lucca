@@ -5,8 +5,10 @@ import {
 	IWebhookFunctions,
 	IWebhookResponseData,
 	JsonObject,
+	NodeApiError,
 } from 'n8n-workflow';
 import { INodeProperties } from 'n8n-workflow/dist/esm/interfaces';
+import { createHmac } from 'crypto';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
 	httpMethod: 'GET',
@@ -57,7 +59,8 @@ const webhookTopics = [
 	"employment.deleted",
 	"job-position.created",
 	"job-position.updated",
-	"job-position.deleted"
+	"job-position.deleted",
+	"test.created"
 ]
 function ToTitleCase(str: string): string {
 	return str.replace(
@@ -102,6 +105,28 @@ function getPropertyFromTopicsAndResource(topics: string[],resource: string ): I
 const webhookProperties: INodeProperties[] = resourcesOptions.map(resource => getPropertyFromTopicsAndResource(webhookTopics,resource.value));
 
 
+function validateSignature(
+	luccaSecret: string | null,
+	luccaSignature: string | null,
+	luccaTimestamp: string | null,
+	rawBody: string,
+): boolean {
+	if (!luccaSecret || !luccaSignature || !luccaTimestamp) {
+		return false;
+	}
+	const luccaDate = new Date(luccaTimestamp);
+	const currentDate = new Date();
+	const timeDiff = Math.abs(currentDate.getTime() - luccaDate.getTime());
+	const timeDiffMinutes = Math.floor(timeDiff / (1000 * 60));
+	if (timeDiffMinutes > 5) {
+		return false;
+	}
+	const expectedSignature = createHmac('sha256', luccaSecret)
+		.update(`${luccaTimestamp}.${rawBody}`)
+		.digest('base64');
+	return expectedSignature === luccaSignature;
+}
+
 export class LuccaWebhooks implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca Webhooks',
@@ -119,6 +144,14 @@ export class LuccaWebhooks implements INodeType {
 		webhooks: [handShakeWebhook, eventsWebhook],
 		credentials: [],
 		properties: [
+			{
+				displayName: "Webhook Signature",
+				name: "webhookSignature",
+				type: "string",
+				default: "",
+				description: "The secret used to validate Lucca webhook signatures. Must match the one set in Lucca webhook configuration.",
+				required: true,
+			},
 			{
 				displayName: 'Resources',
 				name: 'resources',
@@ -141,6 +174,17 @@ export class LuccaWebhooks implements INodeType {
 				webhookResponse: echo,
 			};
 		}
+
+		if (
+			!validateSignature(
+				this.getNodeParameter('webhookSignature') as string,
+				req.header('Lucca-Signature') as string | null,
+				req.header('Lucca-Timestamp') as string | null,
+				req.rawBody.toString(),
+			)
+		) {
+			throw new NodeApiError(this.getNode(), { message: 'Invalid Lucca signature' });
+		}
 		const body = req.body as Event;
 		const topic = body.topic;
 		const operation = this.getNodeParameter('operations') as string[];
@@ -154,4 +198,5 @@ export class LuccaWebhooks implements INodeType {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
 	}
+
 }

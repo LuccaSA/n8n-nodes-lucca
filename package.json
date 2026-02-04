@@ -19,8 +19,9 @@
 	"scripts": {
 		"build": "tsc",
 		"build:watch": "tsc --watch",
-		"dev": "tsc --watch & n8n run",
+		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
+		"start": "n8n start",
 		"lint:fix": "n8n-node lint --fix",
 		"release": "n8n-node release",
 		"prepublishOnly": "n8n-node prerelease"

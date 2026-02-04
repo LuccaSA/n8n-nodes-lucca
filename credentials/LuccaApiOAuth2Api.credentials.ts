@@ -11,51 +11,6 @@ export const LuccaApiCredentialDescription: INodeCredentialDescription = {
 	displayName: 'Lucca oauth2 API',
 	required: true,
 };
-export const scopes = [
-	"employees.readonly",
-	"employees.readwrite",
-	"records.readonly",
-	"records.readwrite",
-	"employments.readonly",
-	"employments.readwrite",
-	"templates.readonly",
-	"templates.readwrite",
-	"positions.readonly",
-	"positions.readwrite",
-	"leaves.readonly",
-	"leaves.readwrite",
-	"requests.readonly",
-	"requests.readwrite",
-	"entities.readonly",
-	"establishments.readonly",
-	"departments.readonly",
-	"extensions.readonly",
-	"extensions.readwrite",
-	"definitions.readonly",
-	"definitions.readwrite",
-	"extensions.readonly",
-	"extensions.readwrite",
-	"definitions.readonly",
-	"definitions.readwrite",
-	"extensions.readonly",
-	"extensions.readwrite",
-	"definitions.readonly",
-	"definitions.readwrite",
-	"periods.readonly",
-	"periods.readwrite",
-	"departments.readwrite",
-	"professions.readonly",
-	"professions.readwrite",
-	"categories.readonly",
-	"categories.readwrite",
-	"qualifications.readonly",
-	"qualifications.readwrite",
-	"endpoints.readonly",
-	"endpoints.readwrite",
-	"deliveries.readonly",
-	"deliveries.readwrite",
-	"events.readonly",
-];
 export class LuccaApiOAuth2Api implements ICredentialType {
 	name = LuccaApiCredential;
 	icon: Icon = 'file:./lucca.svg';
@@ -111,20 +66,6 @@ export class LuccaApiOAuth2Api implements ICredentialType {
 			// multiple values can be selected
 			required: true,
 		},
-		/*
-				{
-			displayName: 'Scopes',
-			name: 'scopes',
-			type: 'multiOptions',
-			default: scopes,
-			options: scopes.map((scope) => ({
-				name: scope,
-				value: scope,
-			})),
-			// multiple values can be selected
-			required: true,
-		},
-		 */
 		{
 			displayName: 'Auth URI Query Parameters',
 			name: 'authQueryParameters',
