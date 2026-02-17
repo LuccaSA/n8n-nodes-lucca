@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you use [Lucca](https://lucca.fr//) in your n8n workflows.
 
-Lucca is a suite of HR software solutions designed to automate administrative processes such as leave management, expense reports, time tracking, and personnel files.
+Lucca is a HRIS solutions designed to automate administrative processes such as leave management, expense reports, time tracking, and employee data.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -75,7 +75,7 @@ This node uses the OpenAPI definition to dynamically generate available operatio
 
 ## Technical Details
 
-This node utilizes the [`@devlikeapro/n8n-openapi-node`](https://github.com/devlikeapro/n8n-openapi-node) library to bridge n8n with the Lucca API.
+This node use the [`@devlikeapro/n8n-openapi-node`](https://github.com/devlikeapro/n8n-openapi-node) library to bridge n8n with the Lucca API.
 
 **Why?**
 The Lucca Public API aims to be comprehensive, eventually covering many different domains (Core HR, Leaves, Time, etc.). Developing and maintaining specific n8n operations for hundreds of endpoints manually is not feasible.

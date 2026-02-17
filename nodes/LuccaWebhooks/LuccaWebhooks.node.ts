@@ -63,7 +63,7 @@ const webhookTopics = [
 	"job-position.deleted",
 	"test.created"
 ]
-function ToTitleCase(str: string): string {
+function toTitleCase(str: string): string {
 	return str.replace(
 		/\w\S*/g,
 		(txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
@@ -76,7 +76,7 @@ function getResourceFromTopic(topic: string): string {
 	return topic.split('.')[0];
 }
 const resourcesOptions = distinctArray(webhookTopics.map(getResourceFromTopic)).map((resource) => ({
-	name: ToTitleCase(resource.replace('-',' ')),
+	name: toTitleCase(resource.replace('-',' ')),
 	value: resource,
 }));
 function getPropertyFromTopicsAndResource(topics: string[],resource: string ): INodeProperties{
@@ -85,8 +85,8 @@ function getPropertyFromTopicsAndResource(topics: string[],resource: string ): I
 			name: 'operations',
 			type: 'multiOptions',
 			noDataExpression: true,
-			options: topics.filter(topic => getResourceFromTopic(topic) === resource).map(topic => {
-				const humanReadableTopic = ToTitleCase(topic.replace(/(\.|-)/g, ' '));
+			options: topics.filter(topic => topic.startsWith(resource)).map(topic => {
+				const humanReadableTopic = toTitleCase(topic.replace(/(\.|-)/g, ' '));
 				const action = topic.split('.')[1];
 				return {
 					name: humanReadableTopic,
