@@ -8,7 +8,8 @@ import {
 	NodeApiError,
 } from 'n8n-workflow';
 import { INodeProperties } from 'n8n-workflow/dist/esm/interfaces';
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
+import { LuccaWebhookSignatureCredentialDescription } from '../../credentials/LuccaWebhookSignature.credential';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
 	httpMethod: 'GET',
@@ -124,7 +125,7 @@ function validateSignature(
 	const expectedSignature = createHmac('sha256', luccaSecret)
 		.update(`${luccaTimestamp}.${rawBody}`)
 		.digest('base64');
-	return expectedSignature === luccaSignature;
+	return timingSafeEqual(Buffer.from(luccaSignature), Buffer.from(expectedSignature));
 }
 
 export class LuccaWebhooks implements INodeType {
@@ -142,16 +143,8 @@ export class LuccaWebhooks implements INodeType {
 		outputs: ['main'],
 		usableAsTool: true,
 		webhooks: [handShakeWebhook, eventsWebhook],
-		credentials: [],
+		credentials: [LuccaWebhookSignatureCredentialDescription],
 		properties: [
-			{
-				displayName: "Webhook Signature",
-				name: "webhookSignature",
-				type: "string",
-				default: "",
-				description: "The secret used to validate Lucca webhook signatures. Must match the one set in Lucca webhook configuration.",
-				required: true,
-			},
 			{
 				displayName: 'Resources',
 				name: 'resources',
@@ -177,7 +170,7 @@ export class LuccaWebhooks implements INodeType {
 
 		if (
 			!validateSignature(
-				this.getNodeParameter('webhookSignature') as string,
+				(await this.getCredentials('luccaWebhookSignature'))?.signature  as string | null,
 				req.header('Lucca-Signature') as string | null,
 				req.header('Lucca-Timestamp') as string | null,
 				req.rawBody.toString(),
@@ -198,5 +191,4 @@ export class LuccaWebhooks implements INodeType {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
 	}
-
 }
