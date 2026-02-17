@@ -1,18 +1,7 @@
-import {
-	Icon,
-	ICredentialType,
-	INodeCredentialDescription,
-	INodeProperties,
-} from 'n8n-workflow';
+import { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
 
-export const LuccaApiCredential = 'luccaOauth2Api';
-export const LuccaApiCredentialDescription: INodeCredentialDescription = {
-	name: LuccaApiCredential,
-	displayName: 'Lucca oauth2 API',
-	required: true,
-};
 export class LuccaApiOAuth2Api implements ICredentialType {
-	name = LuccaApiCredential;
+	name = 'luccaOAuth2Api';
 	icon: Icon = 'file:./lucca.svg';
 	extends = ['oAuth2Api'];
 	displayName = 'Lucca OAuth2 API';
@@ -62,7 +51,7 @@ export class LuccaApiOAuth2Api implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'string',
-			default:'',
+			default: '',
 			// multiple values can be selected
 			required: true,
 		},

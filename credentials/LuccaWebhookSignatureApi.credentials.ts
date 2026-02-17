@@ -1,13 +1,8 @@
-import { Icon, ICredentialType, INodeCredentialDescription, INodeProperties } from 'n8n-workflow';
+import { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
 
-export const LuccaWebhookSignatureApiCredentials = 'luccaWebhookSignature';
-export const LuccaWebhookSignatureCredentialDescription: INodeCredentialDescription = {
-	name: LuccaWebhookSignatureApiCredentials,
-	displayName: 'Lucca webhook signature',
-	required: true,
-};
+//eslint-disable-next-line @n8n/community-nodes/credential-test-required
 export class LuccaWebhookSignatureApi implements ICredentialType {
-	name = LuccaWebhookSignatureApiCredentials;
+	name = 'luccaWebhookSignatureApi';
 	icon: Icon = 'file:./lucca.svg';
 	displayName = 'Lucca Webhook Signature API';
 	documentationUrl = 'https://developers.lucca.fr/documentation/webhooks/catching/validate';

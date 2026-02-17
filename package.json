@@ -30,7 +30,7 @@
 		"dist"
 	],
 	"n8n": {
-		"n8nNodesApiVersion": "2.4.6",
+		"n8nNodesApiVersion": 1,
 		"strict": true,
 		"credentials": [
 			"dist/credentials/LuccaApiOAuth2Api.credentials.js",

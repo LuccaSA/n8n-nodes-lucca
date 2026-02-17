@@ -1,17 +1,20 @@
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import {
 	N8NPropertiesBuilder,
 	N8NPropertiesBuilderConfig,
 	OperationContext,
 	OperationsCollector,
 } from '@devlikeapro/n8n-openapi-node';
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
+import { OpenAPIV3 } from 'openapi-types';
+
 import * as doc from './lucca-api@2024-11-01.json';
 import {
 	INodeProperties,
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { LuccaApiCredentialDescription } from '../../credentials/LuccaApiOAuth2Api.credentials';
-import { OpenAPIV3 } from 'openapi-types';
+import { LuccaApiOAuth2Api } from '../../credentials/LuccaApiOAuth2Api.credentials';
 
 
 const excludedRefParameters = [
@@ -73,7 +76,7 @@ const config: N8NPropertiesBuilderConfig = {
 	OperationsCollector: CustomOperationCollector,
 };
 const parser = new N8NPropertiesBuilder(doc, config);
-let additionalPropertiesByResourceAndOperation: Record<string, INodeProperties[]> = {};
+const additionalPropertiesByResourceAndOperation: Record<string, INodeProperties[]> = {};
 
 const openApiProperties = parser.build().map((operation) => {
 	const resourceName = (operation.displayOptions?.show?.resource ?? [null])[0] as string | null;
@@ -97,8 +100,8 @@ const openApiProperties = parser.build().map((operation) => {
 const parametersOptions : INodeProperties[] = Object.entries(additionalPropertiesByResourceAndOperation).map(([key,value]) => {
 	const [resource, operation] = key.split(':');
 	return {
-		name: 'parameters',
 		displayName: 'Additional query Parameters',
+		name: 'parameters',
 		type: 'collection',
 		placeholder: 'Add query parameter',
 		options: value,
@@ -114,11 +117,10 @@ const parametersOptions : INodeProperties[] = Object.entries(additionalPropertie
 
 
 
-
 export class LuccaNode implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca',
-		name: 'Lucca',
+		name: 'lucca',
 		icon: 'file:./lucca.svg',
 		group: ['transform'],
 		version: 2,
@@ -130,7 +132,13 @@ export class LuccaNode implements INodeType {
 		outputs: ['main'],
 		usableAsTool: true,
 		webhooks: [],
-		credentials: [LuccaApiCredentialDescription],
+		credentials: [
+			{
+				name: LuccaApiOAuth2Api.name,
+				displayName: 'Lucca oauth2 API',
+				required: true,
+			},
+		],
 		properties: [
 			{
 				displayName: 'Automatic Pagination',
