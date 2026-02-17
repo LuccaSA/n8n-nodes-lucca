@@ -33,7 +33,8 @@
 		"n8nNodesApiVersion": "2.4.6",
 		"strict": true,
 		"credentials": [
-			"dist/credentials/LuccaApiOAuth2Api.credentials.ts"
+			"dist/credentials/LuccaApiOAuth2Api.credentials.js",
+			"dist/credentials/LuccaWebhookSignatureApi.credentials.js"
 		],
 		"nodes": [
 			"dist/nodes/Lucca/lucca.node.js",
@@ -41,7 +42,7 @@
 		]
 	},
 	"devDependencies": {
-		"@n8n/node-cli": "*",
+		"@n8n/node-cli": "^0.20.0",
 		"@types/express": "^5.0.6",
 		"eslint": "9.32.0",
 		"prettier": "3.6.2",

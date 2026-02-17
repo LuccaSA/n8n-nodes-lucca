@@ -9,7 +9,7 @@ import {
 } from 'n8n-workflow';
 import { INodeProperties } from 'n8n-workflow/dist/esm/interfaces';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { LuccaWebhookSignatureCredentialDescription } from '../../credentials/LuccaWebhookSignature.credential';
+import { LuccaWebhookSignatureCredentialDescription } from '../../credentials/LuccaWebhookSignatureApi.credentials';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
 	httpMethod: 'GET',
@@ -128,7 +128,7 @@ function validateSignature(
 	return timingSafeEqual(Buffer.from(luccaSignature), Buffer.from(expectedSignature));
 }
 
-export class LuccaWebhooks implements INodeType {
+export class LuccaWebhooksNode implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca Webhooks',
 		name: 'luccaWebhooks',
@@ -177,6 +177,9 @@ export class LuccaWebhooks implements INodeType {
 			)
 		) {
 			throw new NodeApiError(this.getNode(), { message: 'Invalid Lucca signature' });
+		}
+		if (req.headers['content-type'] !== 'application/json') {
+			throw new NodeApiError(this.getNode(), { message: 'Invalid content type, expected application/json' });
 		}
 		const body = req.body as Event;
 		const topic = body.topic;

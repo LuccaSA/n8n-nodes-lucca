@@ -31,8 +31,8 @@ class CustomOperationCollector extends OperationsCollector {
 				return !('$ref' in param && excludedRefParameters.includes(param.$ref));
 			}) ?? []),
 		];
-		const fields = super.parseFields(operation, context);
-		return fields.map((field) => {
+		let fields = super.parseFields(operation, context);
+		fields = fields.map((field) => {
 			if (field.type === 'json') {
 				field.type = 'string';
 			}
@@ -49,7 +49,6 @@ class CustomOperationCollector extends OperationsCollector {
 			}
 			return field;
 		});
-		/*
 		if (['POST', 'PUT', 'PATCH'].includes(context.method)) {
 			fields = fields.filter((field) => field.routing?.send?.type !== 'body');
 			fields.push({
@@ -66,22 +65,9 @@ class CustomOperationCollector extends OperationsCollector {
 				},
 			});
 		}
-		*/
+		return fields;
 	}
-	/*
-	override get operations(): INodeProperties[] {
-		return super.operations.map((operation) => {
-			operation.options = (operation.options ?? []).map((option) => {
-				if ('routing' in option && option.routing?.request?.method === 'GET' && !option.routing.request.url?.includes('{id}')) {
-					option.routing.
-				}
 
-				return option;
-			});
-			return operation;
-		});
-	}
-	*/
 }
 const config: N8NPropertiesBuilderConfig = {
 	OperationsCollector: CustomOperationCollector,
@@ -100,8 +86,8 @@ const openApiProperties = parser.build().map((operation) => {
 		additionalPropertiesByResourceAndOperation[key].push({
 			...operation,
 			displayOptions: undefined,
-			});
-		
+		});
+
 		return null;
 	}
 	return operation;
@@ -115,7 +101,7 @@ const parametersOptions : INodeProperties[] = Object.entries(additionalPropertie
 		displayName: 'Additional query Parameters',
 		type: 'collection',
 		placeholder: 'Add query parameter',
-		options: value, 
+		options: value,
 		displayOptions: {
 			show: {
 				resource: [resource],
@@ -125,11 +111,11 @@ const parametersOptions : INodeProperties[] = Object.entries(additionalPropertie
 		default: {},
 	} as INodeProperties;
 });
-		
 
 
 
-export class Lucca implements INodeType {
+
+export class LuccaNode implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca',
 		name: 'Lucca',

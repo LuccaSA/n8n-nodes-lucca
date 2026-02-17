@@ -1,6 +1,6 @@
 # @lucca/n8n-nodes-lucca
 
-This is an n8n community node. It lets you use [Lucca](http://lucca.fr//) in your n8n workflows.
+This is an n8n community node. It lets you use [Lucca](https://lucca.fr//) in your n8n workflows.
 
 Lucca is a suite of HR software solutions designed to automate administrative processes such as leave management, expense reports, time tracking, and personnel files.
 
