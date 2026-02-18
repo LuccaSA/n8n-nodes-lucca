@@ -33,7 +33,7 @@
 		"n8nNodesApiVersion": 1,
 		"strict": true,
 		"credentials": [
-			"dist/credentials/LuccaApiOAuth2Api.credentials.js",
+			"dist/credentials/LuccaOAuth2Api.credentials.js",
 			"dist/credentials/LuccaWebhookSignatureApi.credentials.js"
 		],
 		"nodes": [

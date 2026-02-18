@@ -1,6 +1,6 @@
 import { Icon, ICredentialType, INodeProperties } from 'n8n-workflow';
 
-export class LuccaApiOAuth2Api implements ICredentialType {
+export class LuccaOAuth2Api implements ICredentialType {
 	name = 'luccaOAuth2Api';
 	icon: Icon = 'file:./lucca.svg';
 	extends = ['oAuth2Api'];

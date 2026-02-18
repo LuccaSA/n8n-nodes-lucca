@@ -9,7 +9,6 @@ import {
 } from 'n8n-workflow';
 import { INodeProperties } from 'n8n-workflow/dist/esm/interfaces';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { LuccaWebhookSignatureApi } from '../../credentials/LuccaWebhookSignatureApi.credentials';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
 	httpMethod: 'GET',
@@ -128,7 +127,7 @@ function validateSignature(
 	return timingSafeEqual(Buffer.from(luccaSignature), Buffer.from(expectedSignature));
 }
 
-export class LuccaWebhooksNode implements INodeType {
+export class LuccaWebhooks implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca Webhooks',
 		name: 'luccaWebhooks',
@@ -145,7 +144,7 @@ export class LuccaWebhooksNode implements INodeType {
 		webhooks: [handShakeWebhook, eventsWebhook],
 		credentials: [
 			{
-				name: LuccaWebhookSignatureApi.name,
+				name: 'luccaWebhookSignatureApi',
 				displayName: 'Lucca webhook signature',
 				required: true,
 			},

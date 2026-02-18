@@ -14,7 +14,6 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { LuccaApiOAuth2Api } from '../../credentials/LuccaApiOAuth2Api.credentials';
 
 
 const excludedRefParameters = [
@@ -117,7 +116,7 @@ const parametersOptions : INodeProperties[] = Object.entries(additionalPropertie
 
 
 
-export class LuccaNode implements INodeType {
+export class Lucca implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Lucca',
 		name: 'lucca',
@@ -134,7 +133,7 @@ export class LuccaNode implements INodeType {
 		webhooks: [],
 		credentials: [
 			{
-				name: LuccaApiOAuth2Api.name,
+				name: "luccaOAuth2Api",
 				displayName: 'Lucca oauth2 API',
 				required: true,
 			},
