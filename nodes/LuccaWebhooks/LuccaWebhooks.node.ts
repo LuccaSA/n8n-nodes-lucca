@@ -1,4 +1,5 @@
 import {
+	IHookFunctions,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookDescription,
@@ -17,56 +18,54 @@ export const handShakeWebhook: IWebhookDescription = {
 export const eventsWebhook: IWebhookDescription = {
 	name: 'default',
 	httpMethod: 'POST',
-	path:'',
-	responseData: 'noData'
+	path: '',
+	responseData: 'noData',
 };
+
 export type Topic = string;
 export type Event = JsonObject & {
 	topic: Topic;
 	data: JsonObject;
 };
 const webhookTopics = [
-	"calendar-event.created",
-	"calendar-event.updated",
-	"calendar-event.deleted",
-	"leave.created",
-	"leave.updated",
-	"leave.deleted",
-	"leave-request.created",
-	"leave-request.updated",
-	"leave-request.deleted",
-	"business-establishment.created",
-	"business-establishment.updated",
-	"business-establishment.deleted",
-	"legal-entity.created",
-	"legal-entity.updated",
-	"legal-entity.deleted",
-	"department.created",
-	"department.updated",
-	"department.deleted",
-	"employee.created",
-	"employee.updated",
-	"employee-personal-record.created",
-	"employee-personal-record.updated",
-	"job-qualification.created",
-	"job-qualification.updated",
-	"job-qualification.deleted",
-	"occupation-category.created",
-	"occupation-category.updated",
-	"occupation-category.deleted",
-	"employment.created",
-	"employment.updated",
-	"employment.deleted",
-	"job-position.created",
-	"job-position.updated",
-	"job-position.deleted",
-	"test.created"
-]
+	'calendar-event.created',
+	'calendar-event.updated',
+	'calendar-event.deleted',
+	'leave.created',
+	'leave.updated',
+	'leave.deleted',
+	'leave-request.created',
+	'leave-request.updated',
+	'leave-request.deleted',
+	'business-establishment.created',
+	'business-establishment.updated',
+	'business-establishment.deleted',
+	'legal-entity.created',
+	'legal-entity.updated',
+	'legal-entity.deleted',
+	'department.created',
+	'department.updated',
+	'department.deleted',
+	'employee.created',
+	'employee.updated',
+	'employee-personal-record.created',
+	'employee-personal-record.updated',
+	'job-qualification.created',
+	'job-qualification.updated',
+	'job-qualification.deleted',
+	'occupation-category.created',
+	'occupation-category.updated',
+	'occupation-category.deleted',
+	'employment.created',
+	'employment.updated',
+	'employment.deleted',
+	'job-position.created',
+	'job-position.updated',
+	'job-position.deleted',
+	'test.created',
+];
 function toTitleCase(str: string): string {
-	return str.replace(
-		/\w\S*/g,
-		(txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
-	);
+	return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
 function distinctArray<T>(arr: T[]): T[] {
 	return arr.filter((value, index, self) => self.indexOf(value) === index);
@@ -75,35 +74,38 @@ function getResourceFromTopic(topic: string): string {
 	return topic.split('.')[0];
 }
 const resourcesOptions = distinctArray(webhookTopics.map(getResourceFromTopic)).map((resource) => ({
-	name: toTitleCase(resource.replace('-',' ')),
+	name: toTitleCase(resource.replace('-', ' ')),
 	value: resource,
 }));
-function getPropertyFromTopicsAndResource(topics: string[],resource: string ): INodeProperties{
-		return {
-			displayName: 'Operations',
-			name: 'operations',
-			type: 'multiOptions',
-			noDataExpression: true,
-			options: topics.filter(topic => topic.startsWith(resource)).map(topic => {
-				const humanReadableTopic = toTitleCase(topic.replace(/(\.|-)/g, ' '));
-				const action = topic.split('.')[1];
-				return {
-					name: humanReadableTopic,
-					value: topic,
-					action: humanReadableTopic,
-					description: `Triggers when a ${resource} is ${action}`,
-				};
-			}),
-			default: [],
-			displayOptions: {
-				show: {
-					resources:[resource]
-				},
+function getPropertyFromTopicsAndResource(topics: string[], resource: string): INodeProperties {
+	return {
+		displayName: 'Operations',
+		name: 'operations',
+		type: 'multiOptions',
+		noDataExpression: true,
+		options: topics
+				.filter((topic) => topic.startsWith(resource))
+				.map((topic) => {
+					const humanReadableTopic = toTitleCase(topic.replace(/(\.|-)/g, ' '));
+					const action = topic.split('.')[1];
+					return {
+						name: humanReadableTopic,
+						value: topic,
+						action: humanReadableTopic,
+						description: `Triggers when a ${resource} is ${action}`,
+					};
+				}),
+		default: [],
+		displayOptions: {
+			show: {
+				resources: [resource],
 			},
-		};
+		},
+	};
 }
-const webhookProperties: INodeProperties[] = resourcesOptions.map(resource => getPropertyFromTopicsAndResource(webhookTopics,resource.value));
-
+const webhookProperties: INodeProperties[] = resourcesOptions.map((resource) =>
+	getPropertyFromTopicsAndResource(webhookTopics, resource.value),
+);
 
 function validateSignature(
 	luccaSecret: string | null,
@@ -126,6 +128,39 @@ function validateSignature(
 		.digest('base64');
 	return timingSafeEqual(Buffer.from(luccaSignature), Buffer.from(expectedSignature));
 }
+interface WebhookEndpoint{
+	id?: string;
+	name: string;
+	webhookUrl: string;
+	topics: string[];
+	apiVersion: string;
+	secret?: string,
+	status: string
+}
+
+function buildWebhookEndpoint(this: IHookFunctions): WebhookEndpoint {
+	const webhookUrl = this.getNodeWebhookUrl('default');
+	const topics = this.getNodeParameter('operations') as string[];
+	const version = this.getNodeParameter('apiVersion') as string;
+	const endpointId = this.getWorkflowStaticData('node').endpointId as string | undefined;
+	if (!webhookUrl) {
+		throw new NodeApiError(this.getNode(), { message: 'Invalid webhook URL' });
+	}
+	return {
+		id: endpointId,
+		name: `n8n: ${this.getNode().name}`,
+		webhookUrl: webhookUrl,
+		topics: topics,
+		apiVersion: version,
+		status: 'active',
+	};
+}
+async function getLuccaBaseUrl(this: IHookFunctions): Promise<string> {
+	let baseUrl = (await this.getCredentials('luccaOAuth2Api')).serverUrl as string;
+	baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+	return baseUrl;
+}
+
 
 export class LuccaWebhooks implements INodeType {
 	description: INodeTypeDescription = {
@@ -144,8 +179,8 @@ export class LuccaWebhooks implements INodeType {
 		webhooks: [handShakeWebhook, eventsWebhook],
 		credentials: [
 			{
-				name: 'luccaWebhookSignatureApi',
-				displayName: 'Lucca webhook signature',
+				name: "luccaOAuth2Api",
+				displayName: 'Lucca oauth2 API',
 				required: true,
 			},
 		],
@@ -158,6 +193,13 @@ export class LuccaWebhooks implements INodeType {
 				default: '',
 			},
 			...webhookProperties,
+			{
+				displayName: 'ApiVersion',
+				name: 'apiVersion',
+				type: 'options',
+				options: [{ name: '2024-11-01', value: '2024-11-01' }],
+				default: '2024-11-01',
+			}
 		],
 	};
 
@@ -169,21 +211,20 @@ export class LuccaWebhooks implements INodeType {
 			const queryParams = req.query;
 			const echo = queryParams['echo'];
 			return {
-				webhookResponse: echo,
+				webhookResponse: echo,				
 			};
 		}
-
 		if (
 			!validateSignature(
-				(await this.getCredentials('luccaWebhookSignature'))?.signature as string | null,
+				this.getWorkflowStaticData('node').secret as string | null,
 				req.header('Lucca-Signature') as string | null,
 				req.header('Lucca-Timestamp') as string | null,
-				req.rawBody.toString(),
+				req.rawBody?.toString(),
 			)
 		) {
 			throw new NodeApiError(this.getNode(), { message: 'Invalid Lucca signature' });
 		}
-		if (req.headers['content-type'] !== 'application/json') {
+		if (!req.headers['content-type']?.includes('application/json')) {
 			throw new NodeApiError(this.getNode(), {
 				message: 'Invalid content type, expected application/json',
 			});
@@ -201,4 +242,63 @@ export class LuccaWebhooks implements INodeType {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
 	}
+	webhookMethods = {
+		default: {
+			async checkExists(this: IHookFunctions): Promise<boolean> {
+				const webhookEndpoint = buildWebhookEndpoint.call(this)
+				if (!webhookEndpoint.id) {
+					return false;
+				}
+				const endpoint = await this.helpers.httpRequestWithAuthentication.call(
+					this,
+					'luccaOAuth2Api',
+					{
+						url: `/lucca-api/webhook-endpoints/${webhookEndpoint.id}`,
+						method: 'GET',
+						headers: {
+							'Api-Version': this.getNodeParameter('apiVersion') as string,
+						},
+					},
+				);
+				if (!endpoint || !endpoint.id){
+					return false;
+				}
+				return true;
+			},
+			async create(this: IHookFunctions): Promise<boolean> {
+				const webhookEndpointPayload = buildWebhookEndpoint.call(this);
+				const baseUrl = await getLuccaBaseUrl.call(this);
+				const endpoint = await this.helpers.httpRequestWithAuthentication.call(
+					this,
+					'luccaOAuth2Api',
+					{
+						url: `${baseUrl}/lucca-api/webhook-endpoints`,
+						method: 'POST',
+						body: webhookEndpointPayload,
+						headers:{
+							"Api-Version": this.getNodeParameter('apiVersion') as string,
+						}
+					},
+				);
+				this.getWorkflowStaticData('node').endpointId = endpoint.id;
+				this.getWorkflowStaticData('node').secret = endpoint.secret;
+				return true;
+			},
+			async delete(this: IHookFunctions): Promise<boolean> {
+				const endpointId = this.getWorkflowStaticData('node').endpointId;
+				if (!endpointId) {
+					return false;
+				}
+				const baseUrl = await getLuccaBaseUrl.call(this);
+				await this.helpers.httpRequestWithAuthentication.call(this, 'luccaOAuth2Api', {
+					url: `${baseUrl}/lucca-api/webhook-endpoints/${endpointId}`,
+					method: 'DELETE',
+					headers: {
+						'Api-Version': this.getNodeParameter('apiVersion') as string,
+					},
+				});
+				return true;
+			},
+		},
+	};
 }
