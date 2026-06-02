@@ -13,12 +13,12 @@ import { createHmac, timingSafeEqual } from 'crypto';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
 	httpMethod: 'GET',
-	path: ''
+	path: 'lucca-webhooks',
 };
 export const eventsWebhook: IWebhookDescription = {
 	name: 'default',
 	httpMethod: 'POST',
-	path: '',
+	path: 'lucca-webhooks',
 	responseData: 'noData',
 };
 
@@ -84,7 +84,7 @@ function getPropertyFromTopicsAndResource(topics: string[], resource: string): I
 		type: 'multiOptions',
 		noDataExpression: true,
 		options: topics
-				.filter((topic) => topic.startsWith(resource))
+				.filter((topic) => topic.startsWith(`${resource}.`))
 				.map((topic) => {
 					const humanReadableTopic = toTitleCase(topic.replace(/(\.|-)/g, ' '));
 					const action = topic.split('.')[1];
@@ -149,7 +149,7 @@ function buildWebhookEndpoint(this: IHookFunctions): WebhookEndpoint {
 	return {
 		id: endpointId,
 		name: `n8n: ${this.getNode().name}`,
-		webhookUrl: webhookUrl,
+		webhookUrl,
 		topics: topics,
 		apiVersion: version,
 		status: 'active',

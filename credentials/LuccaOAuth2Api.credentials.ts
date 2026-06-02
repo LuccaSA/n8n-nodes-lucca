@@ -51,7 +51,7 @@ export class LuccaOAuth2Api implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'string',
-			default: '',
+			default: 'webhook-endpoints.readwrite',
 			// multiple values can be selected
 			required: true,
 		},
@@ -66,6 +66,19 @@ export class LuccaOAuth2Api implements ICredentialType {
 			name: 'authentication',
 			type: 'hidden',
 			default: 'body',
+		},
+		{
+			displayName: 'Send Additional Body Properties',
+			name: 'sendAdditionalBodyProperties',
+			type: 'hidden',
+			default: false,
+		},
+		{
+			displayName: 'Allowed HTTP Request Domains',
+			name: 'allowedHttpRequestDomains',
+			type: 'hidden',
+			default: 'all',
+			description: 'Control which domains this credential can be used with in HTTP Request nodes',
 		},
 	];
 	genericAuth = true;
