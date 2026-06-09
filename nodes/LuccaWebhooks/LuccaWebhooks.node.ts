@@ -179,7 +179,7 @@ export class LuccaWebhooks implements INodeType {
 		webhooks: [handShakeWebhook, eventsWebhook],
 		credentials: [
 			{
-				name: "luccaOAuth2Api",
+				name: 'luccaOAuth2Api',
 				displayName: 'Lucca oauth2 API',
 				required: true,
 			},
@@ -199,7 +199,7 @@ export class LuccaWebhooks implements INodeType {
 				type: 'options',
 				options: [{ name: '2024-11-01', value: '2024-11-01' }],
 				default: '2024-11-01',
-			}
+			},
 		],
 	};
 
@@ -211,7 +211,7 @@ export class LuccaWebhooks implements INodeType {
 			const queryParams = req.query;
 			const echo = queryParams['echo'];
 			return {
-				webhookResponse: echo,				
+				webhookResponse: echo,
 			};
 		}
 		if (
@@ -245,22 +245,23 @@ export class LuccaWebhooks implements INodeType {
 	webhookMethods = {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
-				const webhookEndpoint = buildWebhookEndpoint.call(this)
+				const webhookEndpoint = buildWebhookEndpoint.call(this);
 				if (!webhookEndpoint.id) {
 					return false;
 				}
+				const baseUrl = await getLuccaBaseUrl.call(this);
 				const endpoint = await this.helpers.httpRequestWithAuthentication.call(
 					this,
 					'luccaOAuth2Api',
 					{
-						url: `/lucca-api/webhook-endpoints/${webhookEndpoint.id}`,
+						url: `${baseUrl}/lucca-api/webhook-endpoints/${webhookEndpoint.id}`,
 						method: 'GET',
 						headers: {
 							'Api-Version': this.getNodeParameter('apiVersion') as string,
 						},
 					},
 				);
-				if (!endpoint || !endpoint.id){
+				if (!endpoint || !endpoint.id) {
 					return false;
 				}
 				return true;
@@ -275,9 +276,9 @@ export class LuccaWebhooks implements INodeType {
 						url: `${baseUrl}/lucca-api/webhook-endpoints`,
 						method: 'POST',
 						body: webhookEndpointPayload,
-						headers:{
-							"Api-Version": this.getNodeParameter('apiVersion') as string,
-						}
+						headers: {
+							'Api-Version': this.getNodeParameter('apiVersion') as string,
+						},
 					},
 				);
 				this.getWorkflowStaticData('node').endpointId = endpoint.id;

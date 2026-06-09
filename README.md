@@ -30,7 +30,7 @@ npm run dev # Start the n8n server in HTTP mode.
 ```
 ``` 
 # Optionnal but recommended for local development with HTTPS and a tunel:
-set WORKFLOWS_URL=https://<your-tunnel-url>
+set WEBHOOK_URL=https://<your-tunnel-url>
 mkcert -install # Install the local CA (Certificate Authority) in your system trust store.
 npm run cert # Generate a local SSL certificate for localhost (creates cert.pem and key.pem).5
 npm run dev:https # Start the n8n server in HTTPS mode using the generated certificate.
