@@ -19,10 +19,9 @@
 	"scripts": {
 		"build": "tsc",
 		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
-		"cert": "mkdir .cert&& cd .cert&& mkcert localhost ::5678",
-		"dev": "npm run build && n8n start",
-		"dev:https": "set WEBHOOK_URL=https://n8n.svivier-pc.lucca.io&& set N8N_PROTOCOL=https&& set N8N_SSL_CERT=./.cert/localhost.pem && set N8N_SSL_KEY=./.cert/localhost-key.pem && npm run build && n8n start",
+		"start": "n8n start",
 		"lint:fix": "n8n-node lint --fix",
 		"release": "n8n-node release",
 		"prepublishOnly": "n8n-node prerelease"
@@ -43,17 +42,17 @@
 		]
 	},
 	"devDependencies": {
-		"@n8n/node-cli": "0.31.1",
-		"@types/express": "5.0.6",
-		"eslint": "10.4.1",
-		"prettier": "3.8.3",
-		"release-it": "20.2.0",
-		"typescript": "6.0.3"
+		"@n8n/node-cli": "^0.33.0",
+		"@types/express": "^5.0.6",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^20.0.0",
+		"typescript": "5.9.2"
 	},
 	"peerDependencies": {
-		"n8n-workflow": "2.16.0"
+		"n8n-workflow": "^2.6.0"
 	},
 	"dependencies": {
-		"@devlikeapro/n8n-openapi-node": "0.1.4"
+		"@devlikeapro/n8n-openapi-node": "^0.1.4"
 	}
 }
