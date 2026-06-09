@@ -43,15 +43,15 @@
 		]
 	},
 	"devDependencies": {
-		"@n8n/node-cli": "^0.33.0",
-		"@types/express": "^5.0.6",
-		"eslint": "9.32.0",
-		"prettier": "3.6.2",
-		"release-it": "^20.0.0",
-		"typescript": "5.9.2"
+		"@n8n/node-cli": "0.34.0",
+		"@types/express": "5.0.6",
+		"eslint": "9.29.0",
+		"prettier": "3.8.4",
+		"release-it": "20.2.0",
+		"typescript": "6.0.3"
 	},
 	"peerDependencies": {
-		"n8n-workflow": "^2.6.0"
+		"n8n-workflow": "^2.26.0"
 	},
 	"dependencies": {
 		"@devlikeapro/n8n-openapi-node": "^0.1.4"
