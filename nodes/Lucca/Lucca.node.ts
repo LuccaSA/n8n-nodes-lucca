@@ -10,6 +10,9 @@ import { OpenAPIV3 } from 'openapi-types';
 
 import * as doc from './lucca-api@2024-11-01.json';
 import {
+	IDataObject,
+	IExecuteSingleFunctions,
+	INodeExecutionData,
 	INodeProperties,
 	INodeType,
 	INodeTypeDescription,
@@ -133,7 +136,7 @@ export class Lucca implements INodeType {
 		webhooks: [],
 		credentials: [
 			{
-				name: "luccaOAuth2Api",
+				name: 'luccaOAuth2Api',
 				displayName: 'Lucca oauth2 API',
 				required: true,
 			},
@@ -144,9 +147,25 @@ export class Lucca implements INodeType {
 				name: 'automaticPagination',
 				default: false,
 				description: 'Whether to return all results or only up to the given limit',
+				displayOptions:{
+					show: {}
+				},
 				routing: {
 					send: {
 						paginate: '={{ $value }}',
+					},
+					output:{
+						postReceive:[
+							async function (
+								this: IExecuteSingleFunctions,
+								data: INodeExecutionData[],
+							): Promise<INodeExecutionData[]> {
+								if(!this.getNodeParameter('automaticPagination', 0)){
+									return data;
+								}
+								return this.helpers.returnJsonArray(data.map(item => item.json.items as IDataObject[]).flat());
+							},
+						]
 					},
 					operations: {
 						pagination: {

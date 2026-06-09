@@ -19,6 +19,22 @@ Lucca is a HRIS solutions designed to automate administrative processes such as 
 ### Requirements
 
 * **n8n**: Version 1.0.0 or later.
+* **mkcert**: For local development with HTTPS (optional but recommended).
+
+### Local Development
+1. Clone this repository.
+2. Run `npm install` to install dependencies.
+```
+# Without https (almost impossible to test webhooks locally)
+npm run dev # Start the n8n server in HTTP mode.
+```
+``` 
+# Optionnal but recommended for local development with HTTPS and a tunel:
+set WEBHOOK_URL=https://<your-tunnel-url>
+mkcert -install # Install the local CA (Certificate Authority) in your system trust store.
+npm run cert # Generate a local SSL certificate for localhost (creates cert.pem and key.pem).5
+npm run dev:https # Start the n8n server in HTTPS mode using the generated certificate.
+```
 
 ### Install via n8n (Recommended)
 
@@ -26,14 +42,6 @@ Lucca is a HRIS solutions designed to automate administrative processes such as 
 2. Go to **Settings** > **Community Nodes**.
 3. Click on **Install**.
 4. Enter the package name: `@lucca/n8n-nodes-lucca`.
-
-### Install via npm
-
-If you are running n8n manually or want to include this node in a custom setup, you can install it via npm in your n8n root directory (usually `~/.n8n`):
-
-```bash
-npm install @lucca/n8n-nodes-lucca
-```
 
 ## Operations
 
@@ -56,7 +64,7 @@ This node uses OAuth2 for authentication.
 
 ## Compatibility
 
-Tested with n8n version 1.0.0+.
+Tested with n8n version 2.12.3.
 
 ## Usage
 
