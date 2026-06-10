@@ -83,16 +83,33 @@ This node uses the OpenAPI definition to dynamically generate available operatio
 
 ## Technical Details
 
-This node use the [`@devlikeapro/n8n-openapi-node`](https://github.com/devlikeapro/n8n-openapi-node) library to bridge n8n with the Lucca API.
+This node uses the [`@devlikeapro/n8n-openapi-node`](https://github.com/devlikeapro/n8n-openapi-node) library to bridge n8n with the Lucca API.
 
 **Why?**
 The Lucca Public API aims to be comprehensive, eventually covering many different domains (Core HR, Leaves, Time, etc.). Developing and maintaining specific n8n operations for hundreds of endpoints manually is not feasible.
 
 **How?**
-We include the official Open API specification (Swagger) for Lucca in the node package. The `@devlikeapro/n8n-openapi-node` library parses this specification file to dynamically generate:
+We include the official Open API specification (Swagger) for Lucca in the repository. The `@devlikeapro/n8n-openapi-node` library parses this specification to generate:
 1.  **Node Operations:** All API endpoints are automatically available as operations in the node.
 2.  **UI Parameters:** Input fields for the node are created based on the API parameters and schema.
-3.  **Request Handling:** The library handles the construction and execution of HTTP requests based on the selected operation and provided inputs.
 
 This approach ensures that the node stays up-to-date with the API definition and provides full coverage of the available features.
+
+> [!IMPORTANT]
+> **`@devlikeapro/n8n-openapi-node` is a build-time-only dependency — it is never loaded at runtime.**
+>
+> n8n Cloud does not allow community nodes to ship with runtime dependencies. To comply, the OpenAPI parsing happens at **build time**, not at run time:
+>
+> - **Build time** (`npm run generate`, run as part of `npm run build`): the script in
+>   [`lib/build/generateOpenApiProperties.cts`](lib/build/generateOpenApiProperties.cts) parses the Lucca OpenAPI spec
+>   with `@devlikeapro/n8n-openapi-node` and emits two static files — `nodes/Lucca/openApiProperties.json` and
+>   `nodes/Lucca/parametersOptions.json`. These JSON files are generated artifacts (git-ignored) and are produced
+>   fresh on every build.
+> - **Run time** (inside n8n): `Lucca.node.ts` simply imports those pre-generated JSON files. Neither
+>   `@devlikeapro/n8n-openapi-node` nor `openapi-types` is present in the published package — they live in
+>   `devDependencies` only, so the shipped node has **zero runtime dependencies**.
+>
+> Consequently, the build script lives in `lib/build/` (outside `nodes/`) and uses the `.cts` extension so it is
+> excluded from the n8n community-node lint rules, which forbid third-party imports and Node.js built-ins in node
+> source. If you change the OpenAPI spec, re-run `npm run generate` (or `npm run build`) to regenerate the JSON.
 
