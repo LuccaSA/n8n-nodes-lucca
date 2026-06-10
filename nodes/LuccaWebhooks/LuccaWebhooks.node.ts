@@ -8,8 +8,8 @@ import {
 	JsonObject,
 	NodeApiError,
 	NodeConnectionTypes,
+	INodeProperties
 } from 'n8n-workflow';
-import { INodeProperties } from 'n8n-workflow';
 import { createHmac, timingSafeEqual } from 'crypto';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
