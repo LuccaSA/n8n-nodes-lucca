@@ -7,8 +7,9 @@ import {
 	IWebhookResponseData,
 	JsonObject,
 	NodeApiError,
+	NodeConnectionTypes,
+	INodeProperties
 } from 'n8n-workflow';
-import { INodeProperties } from 'n8n-workflow';
 import { createHmac, timingSafeEqual } from 'crypto';
 export const handShakeWebhook: IWebhookDescription = {
 	name: 'setup',
@@ -164,6 +165,7 @@ async function getLuccaBaseUrl(this: IHookFunctions): Promise<string> {
 
 export class LuccaWebhooks implements INodeType {
 	description: INodeTypeDescription = {
+		subtitle: 'Handle Lucca webhooks',
 		displayName: 'Lucca Webhooks',
 		name: 'luccaWebhooks',
 		icon: 'file:./lucca.svg',
@@ -174,7 +176,7 @@ export class LuccaWebhooks implements INodeType {
 			name: 'LuccaWebhooks',
 		},
 		inputs: [],
-		outputs: ['main'],
+		outputs: [NodeConnectionTypes.Main],
 		usableAsTool: true,
 		webhooks: [handShakeWebhook, eventsWebhook],
 		credentials: [

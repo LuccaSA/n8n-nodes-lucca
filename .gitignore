@@ -2,3 +2,7 @@
 /.idea/
 /dist/
 /.cert/
+
+# Generated at build time by `npm run generate` (lib/build/generateOpenApiProperties.cts)
+/nodes/Lucca/openApiProperties.json
+/nodes/Lucca/parametersOptions.json
