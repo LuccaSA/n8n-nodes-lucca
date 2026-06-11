@@ -82,7 +82,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
+      - name: Run Build
+        run: npm run build
       - name: Release
         # Publishes to npm with a provenance attestation (requires id-token: write above).
         # Lint and build run automatically as part of the release process.
