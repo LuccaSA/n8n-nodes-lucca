@@ -1,6 +1,6 @@
 {
 	"name": "@lucca/n8n-nodes-lucca",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "A n8n community node for Lucca's Public API",
 	"license": "MIT",
 	"homepage": "https://lucca.fr",
@@ -19,7 +19,7 @@
 	},
 	"scripts": {
 		"generate": "tsx lib/build/generateOpenApiProperties.cts",
-		"build": "npm run generate && tsc",
+		"build": "npm run generate && n8n-node build",
 		"build:watch": "tsc --watch",
 		"lint": "n8n-node lint",
 		"cert": "mkdir .cert&& cd .cert&& mkcert localhost ::5678",
