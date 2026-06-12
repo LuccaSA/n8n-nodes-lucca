@@ -1,6 +1,6 @@
 {
 	"name": "@lucca/n8n-nodes-lucca",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "A n8n community node for Lucca's Public API",
 	"license": "MIT",
 	"homepage": "https://lucca.fr",
@@ -38,8 +38,8 @@
 			"dist/credentials/LuccaWebhookSignatureApi.credentials.js"
 		],
 		"nodes": [
-			"dist/nodes/Lucca/lucca.node.js",
-			"dist/nodes/LuccaWebhooks/luccaWebhooks.node.js"
+			"dist/nodes/Lucca/Lucca.node.js",
+			"dist/nodes/LuccaWebhooks/LuccaWebhooks.node.js"
 		]
 	},
 	"devDependencies": {
