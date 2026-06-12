@@ -1,6 +1,6 @@
 {
 	"name": "@lucca/n8n-nodes-lucca",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "A n8n community node for Lucca's Public API",
 	"license": "MIT",
 	"homepage": "https://lucca.fr",
