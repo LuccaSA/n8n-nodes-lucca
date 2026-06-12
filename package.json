@@ -25,9 +25,7 @@
 		"cert": "mkdir .cert&& cd .cert&& mkcert localhost ::5678",
 		"dev": "npm run build && n8n start",
 		"dev:https": "set N8N_PROTOCOL=https&& set N8N_SSL_CERT=./.cert/localhost.pem && set N8N_SSL_KEY=./.cert/localhost-key.pem && npm run build && n8n start",
-		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
-		"prepublishOnly": "n8n-node prerelease"
+		"lint:fix": "n8n-node lint --fix"
 	},
 	"files": [
 		"dist"
