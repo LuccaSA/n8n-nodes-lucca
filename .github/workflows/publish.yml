@@ -86,6 +86,7 @@ jobs:
         run: npm run build
       - name: Run Stage
         run: npm stage publish --provenance --access public
+      
       - name: Release
         # Publishes to npm with a provenance attestation (requires id-token: write above).
         # Lint and build run automatically as part of the release process.
@@ -95,6 +96,7 @@ jobs:
         # Option B (token): set NPM_TOKEN in repo secrets — it is written to
         #   .npmrc here before publishing.
         run: |
+          npm version from-git --git-tag-version false
           [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
           npm publish --provenance --access public 
         env:
