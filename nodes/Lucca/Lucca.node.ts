@@ -32,7 +32,7 @@ export class Lucca implements INodeType {
 		credentials: [
 			{
 				name: 'luccaOAuth2Api',
-				displayName: 'Lucca oauth2 API',
+				displayName: 'Lucca OAuth2 API',
 				required: true,
 			},
 		],
