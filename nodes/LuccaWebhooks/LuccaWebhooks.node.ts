@@ -182,7 +182,7 @@ export class LuccaWebhooks implements INodeType {
 		credentials: [
 			{
 				name: 'luccaOAuth2Api',
-				displayName: 'Lucca oauth2 API',
+				displayName: 'Lucca OAuth2 API',
 				required: true,
 			},
 		],
@@ -196,7 +196,7 @@ export class LuccaWebhooks implements INodeType {
 			},
 			...webhookProperties,
 			{
-				displayName: 'ApiVersion',
+				displayName: 'API Version',
 				name: 'apiVersion',
 				type: 'options',
 				options: [{ name: '2024-11-01', value: '2024-11-01' }],
@@ -300,6 +300,8 @@ export class LuccaWebhooks implements INodeType {
 						'Api-Version': this.getNodeParameter('apiVersion') as string,
 					},
 				});
+				this.getWorkflowStaticData('node').endpointId = undefined;
+				this.getWorkflowStaticData('node').secret = undefined;
 				return true;
 			},
 		},
