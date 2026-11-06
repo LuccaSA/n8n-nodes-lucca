@@ -57,7 +57,7 @@ This node provides a generic interface to the Lucca Public API, allowing you to 
 
 This node uses OAuth2 for authentication.
 
-1. Create an API Key/Application in your Lucca instance (refer to [Lucca documentation](https://developers.lucca.fr/documentation/using-api/authentication#authentication-steps)).
+1. Create an API Key/Application in your Lucca instance (refer to [Lucca documentation](https://developers.luccasoftware.com/documentation/using-api/authentication#authentication-steps)).
 2. in n8n, create a new credential for **Lucca API**.
 3. Enter your **Lucca Domain** (e.g., `mydomain` for `https://mydomain.ilucca.net`).
 4. Enter your **Client ID** and **Client Secret**.
@@ -78,7 +78,7 @@ This node uses the OpenAPI definition to dynamically generate available operatio
 ## Resources
 
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* [Lucca Developer Portal](https://developers.lucca-hr.com/)
+* [Lucca Developer Portal](https://developers.luccasoftware.com/)
 * [Lucca Website](https://www.lucca-hr.com/)
 
 ## Technical Details
