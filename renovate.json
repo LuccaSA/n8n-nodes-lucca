@@ -2,5 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>LuccaSA/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "Automerge minor and patch updates once CI passes",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true
+    }
   ]
 }
